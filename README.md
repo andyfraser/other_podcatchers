@@ -30,7 +30,7 @@ sudo apt install php-cli php-xml
 Download the script and make it executable:
 
 ```bash
-curl -O https://raw.githubusercontent.com/youruser/podcatcher/main/podcatcher.php
+curl -O https://raw.githubusercontent.com/andyfraser/other_podcatchers/main/podcatcher.php
 chmod +x podcatcher.php
 mv podcatcher.php ~/bin/podcatcher
 ```
