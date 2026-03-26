@@ -65,10 +65,13 @@ function open_url(string $url, int $timeout = 30): array|false {
     $body = @file_get_contents($url, false, $ctx);
     if ($body === false) return false;
 
-    // Parse response headers ($http_response_header is set by file_get_contents)
+    // Parse response headers
     $headers = [];
-    if (!empty($http_response_header)) {
-        foreach ($http_response_header as $line) {
+    $raw_headers = function_exists('http_get_last_response_headers')
+        ? (http_get_last_response_headers() ?? [])
+        : ($http_response_header ?? []);
+    if (!empty($raw_headers)) {
+        foreach ($raw_headers as $line) {
             if (preg_match('/^([^:]+):\s*(.+)$/i', $line, $m)) {
                 $headers[strtolower($m[1])] = trim($m[2]);
             }
@@ -103,8 +106,11 @@ function download_episode(array &$ep, string $slug): string|null {
 
     // Try to get Content-Length from response headers
     $total = 0;
-    if (!empty($http_response_header)) {
-        foreach ($http_response_header as $h) {
+    $raw_headers = function_exists('http_get_last_response_headers')
+        ? (http_get_last_response_headers() ?? [])
+        : ($http_response_header ?? []);
+    if (!empty($raw_headers)) {
+        foreach ($raw_headers as $h) {
             if (stripos($h, 'content-length:') === 0) {
                 $total = (int) trim(substr($h, 15));
             }
